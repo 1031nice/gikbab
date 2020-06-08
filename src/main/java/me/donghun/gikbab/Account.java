@@ -7,7 +7,7 @@ public class Account {
 
     // 한 사람마다 '취향'을 나타내는 객체를 가지고 있게 하는건 어떨까
 
-    @Id @GeneratedValue
+   @Id @GeneratedValue
     private Long id;
 
     private String password;

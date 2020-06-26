@@ -1,9 +1,6 @@
 package me.donghun.gikbab;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,19 +34,18 @@ public class Controller {
 
         // 1차 가공: 원하는 요일의 식사 정보 가져오기
         while ((line = br.readLine()) != null) {
-            if(line.contains(day + "(")){ // 원하는 요일 찾음
+            if (line.contains(day + "(")) { // 원하는 요일 찾음
                 flag = true;
                 builder.append(line);
-                while((line = br.readLine()) != null) { // 달의 마지막 날인 경우 예외처리 필요
-                    if(!line.contains((day+1) + "(")){
+                while ((line = br.readLine()) != null) { // 달의 마지막 날인 경우 예외처리 필요
+                    if (!line.contains((day + 1) + "(")) {
                         builder.append(line);
-                    }
-                    else{
+                    } else {
                         break;
                     }
                 }
             }
-            if(flag) // 원하는 요일을 찾고 저장까지 끝냈으므로 반복 탈출
+            if (flag) // 원하는 요일을 찾고 저장까지 끝냈으므로 반복 탈출
                 break;
         }
         String naive = builder.toString();
@@ -59,8 +55,8 @@ public class Controller {
         int breakfast_eng = -1, lunch_eng = -1, dinner_eng = -1; // 영어 메뉴는 제거할 생각
         String replace = naive;
 //        String replace = naive.replace("<br />", "");
-        for(int i=0; i<replace.length(); i++) {
-            if(replace.charAt(i) == 'A'){
+        for (int i = 0; i < replace.length(); i++) {
+            if (replace.charAt(i) == 'A') {
                 count++;
                 switch (count) {
                     case 1:
@@ -91,8 +87,25 @@ public class Controller {
         String str = k1 + "아침<br />" + k2 + "점심<br />" + k3 + "저녁<br />" + k4;
         String[] split = str.split("메인");
         StringBuilder builder2 = new StringBuilder();
-        Arrays.stream(split).forEach(s -> builder2.append(s+"<br />"));
+        Arrays.stream(split).forEach(s -> builder2.append(s + "<br />"));
         return builder2.toString();
+    }
+
+    @ResponseBody
+    @GetMapping("/search")
+    public String search(@RequestParam String input) throws IOException {
+        return input;
+    }
+
+    @GetMapping("/upload")
+    public String upload(){
+        return "uploadForm";
+    }
+
+    @ResponseBody
+    @PostMapping("/upload")
+    public String processUpload(){
+        return "not yet";
     }
 
 }

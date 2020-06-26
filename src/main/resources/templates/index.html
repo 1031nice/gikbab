@@ -8,14 +8,17 @@
 <input type="date" name="today" id="today"/>
 <script>document.getElementById('today').value = new Date().toISOString().substring(0, 10);</script>
 <form method="get" action="/todayDiet">
-    <input value="today" type="submit">
-    <input value="월요일 메뉴" type="submit">
-    <input value="화요일 메뉴" type="submit">
-    <input value="수요일 메뉴" type="submit">
-    <input value="목요일 메뉴" type="submit">
-    <input value="금요일 메뉴" type="submit">
-    <input value="토요일 메뉴" type="submit">
-    <input value="일요일 메뉴" type="submit">
+    <input value="오늘 메뉴" type="submit">
 </form>
+
+<form method="get" action="/upload">
+    <input value="제보" type="submit">
+</form>
+
+<form method="get" action="/search">
+    <input name="input" type="text">
+    <input value="검색" type="submit">
+</form>
+
 </body>
 </html>

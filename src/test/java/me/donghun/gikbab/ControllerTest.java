@@ -21,6 +21,21 @@ public class ControllerTest {
     MockMvc mockMvc;
 
     @Test
+    public void upload() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/upload"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void search() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/search").param("input", "순두부찌개"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("순두부찌개"));
+    }
+
+    @Test
     public void todayDiet() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/todayDiet"))
                 .andDo(print())

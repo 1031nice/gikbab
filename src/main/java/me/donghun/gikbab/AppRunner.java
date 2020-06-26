@@ -19,18 +19,16 @@ public class AppRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        URL url = new URL("http://dorm.cnu.ac.kr/html/kr/sub03/sub03_0304.html");
-        URLConnection con = url.openConnection();
-        InputStream is = con.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
-        StringBuilder builder = new StringBuilder();
-        while ((line = br.readLine()) != null) {
-            if(line.contains("<table class=\"default_view diet_table\">"))
-                while(!(line = br.readLine()).contains("</table>"))
-                    builder.append(line);
-        }
-        System.out.println(builder.toString());
-        // 전체 식단
+//        URL url = new URL("http://dorm.cnu.ac.kr/html/kr/sub03/sub03_0304.html");
+//        URLConnection con = url.openConnection();
+//        InputStream is = con.getInputStream();
+//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//        String line = null;
+//        StringBuilder builder = new StringBuilder();
+//        while ((line = br.readLine()) != null) {
+//            if(line.contains("<table class=\"default_view diet_table\">"))
+//                while(!(line = br.readLine()).contains("</table>"))
+//                    builder.append(line);
+//        }
     }
 }

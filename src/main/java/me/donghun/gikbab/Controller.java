@@ -1,6 +1,14 @@
 package me.donghun.gikbab;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +22,9 @@ import java.util.Date;
 
 @org.springframework.stereotype.Controller
 public class Controller {
+
+    @Autowired
+    StorageService storageService;
 
     @ResponseBody
     @GetMapping("/todayDiet")
@@ -93,8 +104,10 @@ public class Controller {
 
     @ResponseBody
     @GetMapping("/search")
-    public String search(@RequestParam String input) throws IOException {
-        return input;
+    public ResponseEntity<Resource> search(@RequestParam String input) throws IOException {
+        String filename = input + ".jpg"; // 다 jpg로 올리도록 강제해야겠네
+        Resource file = storageService.loadAsResource(filename);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
     }
 
     @GetMapping("/upload")
@@ -102,10 +115,12 @@ public class Controller {
         return "uploadForm";
     }
 
-    @ResponseBody
     @PostMapping("/upload")
-    public String processUpload(){
-        return "not yet";
+    public String processUpload(@RequestParam MultipartFile file, RedirectAttributes redirectAttributes){
+        String filename = file.getOriginalFilename();
+        storageService.store(file);
+        redirectAttributes.addFlashAttribute("message", "제보해주셔서 감사합니다");
+        return "redirect:/upload";
     }
 
 }

@@ -30,7 +30,8 @@ ComponentScan은 Component 에노테이션이 붙은 클래스들을 스캔하�
 public class GikbabApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GikbabApplication.class, args);
+        SpringApplication application = new SpringApplication(GikbabApplication.class);
+        application.run(args);
     }
 
 }

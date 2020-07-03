@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
@@ -25,6 +26,51 @@ public class Controller {
 
     @Autowired
     StorageService storageService;
+
+    @Autowired
+    SearchService searchService;
+
+    @ResponseBody
+    @GetMapping("/original")
+    public String original() throws IOException {
+        URL url = new URL("http://dorm.cnu.ac.kr/html/kr/sub03/sub03_0304.html");
+        URLConnection con = url.openConnection();
+        InputStream is = con.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        StringBuilder builder = new StringBuilder();
+        int countDiv = 1;
+        while ((line = br.readLine()) != null) {
+            if(line.contains("<div id=\"contents\"")){
+                builder.append(line);
+                while(true) {
+                    line = br.readLine();
+                    if(line == null)
+                        break;
+                    else{
+                        if(countDiv == 0)
+                            break;
+                        if(line.contains("</div>"))
+                            countDiv--;
+                        else if(line.contains("<div"))
+                            countDiv++;
+                        builder.append(line);
+                    }
+                }
+            }
+        }
+
+//        while ((line = br.readLine()) != null) {
+//            builder.append(line);
+//        }
+
+//        while ((line = br.readLine()) != null) {
+//            if(line.contains("<table class=\"default_view diet_table\">"))
+//                while(!(line = br.readLine()).contains("</table>"))
+//                    builder.append(line);
+//        }
+        return builder.toString();
+    }
 
     @ResponseBody
     @GetMapping("/todayDiet")
@@ -65,7 +111,6 @@ public class Controller {
         int breakfast = -1, lunch = -1, dinner = -1, count = 0;
         int breakfast_eng = -1, lunch_eng = -1, dinner_eng = -1; // 영어 메뉴는 제거할 생각
         String replace = naive;
-//        String replace = naive.replace("<br />", "");
         for (int i = 0; i < replace.length(); i++) {
             if (replace.charAt(i) == 'A') {
                 count++;
@@ -102,13 +147,52 @@ public class Controller {
         return builder2.toString();
     }
 
-    @ResponseBody
+//    @ResponseBody
+//    @GetMapping("/search")
+//    public ResponseEntity<Resource> search(@RequestParam String input) {
+//
+//        // image를 view로 보내보자
+//        if(searchService.isExist()){
+//            if(searchService.hasPicture()){ // 그런 음식이 존재하고 사진까지 있다
+//                String filename = input + ".jpg"; // 다 jpg로 올리도록 강제해야겠네
+//                Resource file = storageService.loadAsResource(filename);
+//                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
+//            }
+//            else{ // 음식은 존재하지만 사진은 없다
+//                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).;
+//            }
+//        } // 그런 음식이 없다
+//        else{
+//            return "기숙사 식당에 있는 메뉴가 맞나요?";
+//        }
+//
+//    }
+
     @GetMapping("/search")
-    public ResponseEntity<Resource> search(@RequestParam String input) throws IOException {
-        String filename = input + ".jpg"; // 다 jpg로 올리도록 강제해야겠네
-        Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
+    public ModelAndView search(@RequestParam String input) {
+        ModelAndView mav = new ModelAndView();
+        String errorMessage;
+        // image를 view로 보내보자
+        if(searchService.isExist()){
+            if(searchService.hasPicture()){ // 그런 음식이 존재하고 사진까지 있다
+                String filename = input + ".jpg"; // 다 jpg로 올리도록 강제해야겠네
+                Resource file = storageService.loadAsResource(filename);
+                mav.addObject("file", file);
+                mav.setViewName("searchFood");
+                return mav;
+            }
+            else{ // 음식은 존재하지만 사진은 없다
+                errorMessage = "아직 사진이 없습니다. 제보해주시겠어요?";
+            }
+        } // 그런 음식이 없다
+        else{
+            errorMessage = "기숙사 식당에 있는 음식 맞나요?";
+        }
+        mav.addObject("errorMessage", errorMessage);
+        mav.setViewName("error");
+        return mav;
     }
+
 
     @GetMapping("/upload")
     public String upload(){

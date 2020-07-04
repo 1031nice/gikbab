@@ -173,8 +173,8 @@ public class Controller {
         ModelAndView mav = new ModelAndView();
         String errorMessage;
         // image를 view로 보내보자
-        if(searchService.isExist()){
-            if(searchService.hasPicture()){ // 그런 음식이 존재하고 사진까지 있다
+        if(searchService.isExist(input)){
+            if(searchService.hasPicture(input)){ // 그런 음식이 존재하고 사진까지 있다
                 String filename = input + ".jpg"; // 다 jpg로 올리도록 강제해야겠네
                 Resource file = storageService.loadAsResource(filename);
                 mav.addObject("file", file);
